@@ -15,7 +15,7 @@ if (!require(BiocManager)) { install.packages("BiocManager"); library(BiocManage
 if (!require(TissueEnrich)) { install.packages("TissueEnrich"); library(TissueEnrich)}
 #BiocManager::install("TissueEnrich", force=TRUE)
 
-#Loading in data and selecting appropriate gene-edited cell lines.
+#Loading in TMT-MS data and selecting TMT-MS data for ∆UIM.
 TMTMS_rawdata <- read.csv("./Input/Abundance_vs_pvalues.csv", skip = 1)
 TMTMS_data <- TMTMS_rawdata %>% 
   dplyr::select(., 1, 4, 5) %>% 
@@ -63,10 +63,12 @@ graph <- ggplot(data=TMTMS_data_labelled, aes(x=Log2Abundance, y=Neglog10pvalue,
   labs(x= "Log2(∆UIM/WT)", y="-Log10(p-value)") +
   theme(legend.position = "None") + 
   scale_colour_discrete(breaks=c("NA", "No", "Yes"), type = c("black", "cornflowerblue", "maroon"))
+
+#Displaying Graph
 graph
 
-#Saving graph as a '.tiff' file.
-ggsave("./Output/tissuespecificity_∆UIM.tiff", graph, width = 3456/250, height = 2234/(250/1.547), dpi = 300, bg = "transparent")
+#Saving graph as a '.tiff' file. Duplicate and modify as needed for other file types (e.g. '.svg')
+ggsave("./Output/Figure2A.tiff", graph, width = 3456/250, height = 2234/(250/1.547), dpi = 300, bg = "transparent")
 
 #Calculating relative percentage of Tissue Specific proteins within certain thresholds. See Table S1 in Lu & Osei-Amponsa et al., 2025.
 Num_Specific_less1 <- nrow(TMTMS_data_labelled[which(abs(TMTMS_data_labelled$Log2Abundance) <= 1 & TMTMS_data_labelled$TissueSpecificity == "Yes" & TMTMS_data_labelled$Neglog10pvalue > 1.301),])
@@ -81,4 +83,4 @@ Num_Specific_more2 <- nrow(TMTMS_data_labelled[which(abs(TMTMS_data_labelled$Log
 Num_Total_more2 <- nrow(TMTMS_data_labelled[which(abs(TMTMS_data_labelled$Log2Abundance) >= 2 & TMTMS_data_labelled$TissueSpecificity != "NA" & TMTMS_data_labelled$Neglog10pvalue > 1.301),])
 Percent_Specific_Total_more2 = Num_Specific_more2/Num_Total_more2
 
-#_____________________________________________
+#----------------------------------------
